@@ -9,8 +9,8 @@ class TestCoordinates(unittest.TestCase):
         self.assertIsInstance(coordinates, Coordinates)
         self.assertIsInstance(coordinates.x, str)
         self.assertIsInstance(coordinates.y, str)
-        self.assertEquals(coordinates.x, 'A')
-        self.assertEquals(coordinates.y, '1')
+        self.assertEqual(coordinates.x, 'A')
+        self.assertEqual(coordinates.y, '1')
     
 
 if __name__ == '__main__':

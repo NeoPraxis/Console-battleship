@@ -11,6 +11,9 @@ class Ship:
         'Carrier': 5
     }
 
-    def __init__(self, size, coordinates):
-        self.size = size
+    def __init__(self, model, coordinates):
+        self.size = self.models.get(model)
+        self.model = model
+        if self.size != len(coordinates):
+            raise TypeError
         self.coordinates = coordinates
