@@ -3,7 +3,7 @@ from coordinates import Coordinates
 
 class Ship:
     
-    models  = {
+    models = {
         'Destroyer': 2,
         'Cruiser': 3,
         'Submarine': 3,
@@ -15,5 +15,5 @@ class Ship:
         self.size = self.models.get(model)
         self.model = model
         if self.size != len(coordinates):
-            raise TypeError
+            raise TypeError(f'{self.model} requires {self.size} coordinates')
         self.coordinates = coordinates
