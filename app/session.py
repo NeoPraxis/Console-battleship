@@ -3,6 +3,7 @@ from player import Player
 from turn import Turn
 from ship import Ship
 from shot import Shot
+from grid import Grid
 
 class Session:
 
@@ -42,12 +43,35 @@ class Session:
         for model in Ship.models:
             while not self.place_ship_on_player_grid(player, model):
                 pass
-    
-        
+    # TODO keep playing ROUNDS until game is over
+    def play_a_round(self):
+        is_game_over = self.play_a_turn(self.__players[0], self.__players[1])
+        if is_game_over:
+            return is_game_over
+        is_game_over = self.play_a_turn(self.__players[1], self.__players[0])
+        return is_game_over
 
-    # Round Hand
+    def play_a_turn(self, player: Player, opponent: Player) -> bool:
+        shot = self.get_verified_shot(player, opponent)
+        recorded_shot = self.record_a_shot(shot, opponent)
+        if recorded_shot:
+            turn = Turn(shot, player)
+            self.add_turn(turn)
+        # TODO make test if player is Da Feet Ed, hit the grid in the player
+        is_game_over = False
+        return is_game_over
 
-    # Turn Handler for both players
+    def get_verified_shot(self, player: Player, opponent: Player) -> Shot:
+        shot = None
+        is_shot_verified = False
+        while not is_shot_verified:
+            # TODO get a shot from AI or UI \
+            player_response = Grid.get_random_coordinates()
+            xy_coordinates = player_response[0]
+            shot_coordinates = Coordinates(xy_coordinates)
+            shot = Shot(shot_coordinates)
+            is_shot_verified = self.verify_a_shot(shot, opponent)
+        return shot
 
     def add_turn(self, turn: Turn):
         self.__turns.append(turn)
@@ -55,7 +79,6 @@ class Session:
     def number_of_turns(self):
         return len(self.__turns)
 
-    # get shot from player
     def verify_a_shot(self, shot: Shot, player: Player) -> bool:
         # Boolean can be mathematical lmfao
         is_shot_verified = not not not player.grid.is_shot_taken(shot.coordinates)
@@ -66,3 +89,5 @@ class Session:
         return is_shot_recieved
     # announce the turn results
     # Display Get Weener
+
+
