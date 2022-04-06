@@ -13,8 +13,20 @@ class Session:
 
     # Play a new game calls set up players, loop, get winner
 
-    # Set up new game with players
+    def start_new_game(self):
+        self.set_up_game()
+        self.play_a_game()
 
+    def set_up_game(self):
+        player = Player(' ', is_ai = False)
+        opponent = Player('AI', is_ai = True)
+        self.set_player_name(player)
+        self.set_player_name(opponent)
+        self.add_player(player)
+        self.add_player(opponent)
+        self.place_ships(player)
+        self.place_ships(opponent)
+        
     def set_player_name(self, player: Player):
         pass
 
@@ -38,12 +50,18 @@ class Session:
         except:
             result = False
         return result
-
+    
     def place_ships(self, player):
         for model in Ship.models:
             while not self.place_ship_on_player_grid(player, model):
                 pass
-    # TODO keep playing ROUNDS until game is over
+    
+    def play_a_game(self) -> bool:
+        is_game_over = False
+        while not is_game_over:
+            is_game_over = self.play_a_round()
+        return is_game_over
+
     def play_a_round(self):
         is_game_over = self.play_a_turn(self.__players[0], self.__players[1])
         if is_game_over:
@@ -57,15 +75,14 @@ class Session:
         if recorded_shot:
             turn = Turn(shot, player)
             self.add_turn(turn)
-        # TODO make test if player is Da Feet Ed, hit the grid in the player
-        is_game_over = False
+        is_game_over = self.is_game_over()
         return is_game_over
 
     def get_verified_shot(self, player: Player, opponent: Player) -> Shot:
         shot = None
         is_shot_verified = False
         while not is_shot_verified:
-            # TODO get a shot from AI or UI \
+            # TODO get a shot from AI or UI
             player_response = Grid.get_random_coordinates()
             xy_coordinates = player_response[0]
             shot_coordinates = Coordinates(xy_coordinates)
@@ -89,5 +106,6 @@ class Session:
         return is_shot_recieved
     # announce the turn results
     # Display Get Weener
-
-
+    def is_game_over(self):
+        defeated_player = next((p for p in self.__players if p.is_defeated()), None)
+        return defeated_player is not None

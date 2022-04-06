@@ -99,3 +99,9 @@ class Grid:
                 shot_coordinates.model = ship_coordinates.model
                 ship_coordinates.hit = True
                 shot_coordinates.hit = True
+
+    def is_ship_sunk(self, model: str) -> bool:
+        ship = next((s for s in self.ships if s.model == model), None)
+        operational = next((c for c in ship.coordinates if c.hit == False), None)
+        return not operational
+        
