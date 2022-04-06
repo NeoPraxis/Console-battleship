@@ -11,11 +11,11 @@ class Session:
         self.__players = []
         self.__turns = []
 
-    # Play a new game calls set up players, loop, get winner
-
     def start_new_game(self):
         self.set_up_game()
         self.play_a_game()
+        winner = self.get_winner()
+        return winner
 
     def set_up_game(self):
         player = Player(' ', is_ai = False)
@@ -104,8 +104,14 @@ class Session:
     def record_a_shot(self, shot: Shot, player: Player) -> bool:
         is_shot_recieved = player.receive_a_shot(shot.coordinates)
         return is_shot_recieved
-    # announce the turn results
-    # Display Get Weener
+    
     def is_game_over(self):
         defeated_player = next((p for p in self.__players if p.is_defeated()), None)
         return defeated_player is not None
+
+    def get_winner(self):
+        winner = next((p for p in self.__players if not p.is_defeated()), None)
+        return winner
+
+    # announce the turn results
+    # Display Get Weener

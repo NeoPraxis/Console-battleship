@@ -32,6 +32,7 @@ class TestSession(unittest.TestCase):
         self.assertTrue(callable(self.session.is_game_over))
         self.assertTrue(callable(self.session.play_a_game))
         self.assertTrue(callable(self.session.start_new_game))
+        self.assertTrue(callable(self.session.get_winner))
 
     def get_player_with_shot(self):
         player = Player('Bob', is_ai = False)
@@ -180,9 +181,25 @@ class TestSession(unittest.TestCase):
         with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
             with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
                 session = Session()
+                winner = session.start_new_game()
+                game_over = session.is_game_over()
+                self.assertTrue(game_over)
+                self.assertIsInstance(winner, Player)
+
+    def test_get_winner(self):
+        def fake_set_player_name(self, player):
+            player.name = 'fakename'
+        def get_coordinates_from_player(self, player):
+            return Grid.get_random_coordinates()
+        with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
+            with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
+                session = Session()
                 session.start_new_game()
                 game_over = session.is_game_over()
                 self.assertTrue(game_over)
+                winner = session.get_winner()
+                self.assertIsInstance(winner, Player)
+                self.assertFalse(winner.is_defeated())
         
         
 
