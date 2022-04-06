@@ -18,6 +18,7 @@ class TestGrid(unittest.TestCase):
         self.assertEqual(self.grid.x[9], '0')
         self.assertIsInstance(self.grid.ships, list)
         self.assertIsInstance(self.grid.shots, list)
+        self.assertTrue(callable(self.grid.is_ship_sunk))
         
     def test_add_ship_fails_with_incorrect_number_of_coordinates(self):
         
@@ -188,6 +189,23 @@ class TestGrid(unittest.TestCase):
         is_hit = self.grid.ships[0].coordinates[0].hit
         self.assertTrue(is_hit)
         self.assertEqual(coordinates.model, 'Destroyer')
+
+    def test_is_ship_sunk_returns_false_if_not_sunk(self):
+        
+        location = {'y':'A', 'x':'1'}
+        ship_coordinates_list = self.grid.get_location_coordinates(
+            model = 'Destroyer', location = location, orientation = 'h'
+            )
+        self.grid.add_ship('Destroyer', ship_coordinates_list)
+        ship_sunk = self.grid.is_ship_sunk('Destroyer')
+        self.assertEqual(ship_sunk, False)
+        ship_coordinates_list[0].hit = True
+        ship_coordinates_list[1].hit = True
+        ship_sunk = self.grid.is_ship_sunk('Destroyer')
+        self.assertTrue(ship_sunk)
+       
+
+
 
 
 if __name__ == '__main__':

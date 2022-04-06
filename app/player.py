@@ -1,5 +1,6 @@
 from grid import Grid
 from coordinates import Coordinates
+from ship import Ship
 
 class Player:
     
@@ -12,5 +13,9 @@ class Player:
         shot_taken = self.grid.take_a_shot(shot_coordinates)
         return shot_taken
 
+    def is_defeated(self) -> bool:
+        has_operational_ship = next((m for m in Ship.models.keys() if not self.grid.is_ship_sunk(m)), None)
+        return not has_operational_ship
+        
         
         

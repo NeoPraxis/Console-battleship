@@ -1,3 +1,4 @@
+import random
 from typing import List
 from coordinates import Coordinates
 from ship import Ship
@@ -7,6 +8,10 @@ class Grid:
     y = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
+    @staticmethod
+    def get_random_coordinates() -> dict:
+        return {'x': random.choice(Grid.x), 'y': random.choice(Grid.y)}, random.choice(['h', 'v'])
+    
     def __init__(self):
         self.ships: list[Ship] = []
         self.shots: list[Shot] = []
@@ -94,3 +99,9 @@ class Grid:
                 shot_coordinates.model = ship_coordinates.model
                 ship_coordinates.hit = True
                 shot_coordinates.hit = True
+
+    def is_ship_sunk(self, model: str) -> bool:
+        ship = next((s for s in self.ships if s.model == model), None)
+        operational = next((c for c in ship.coordinates if c.hit == False), None)
+        return not operational
+        
