@@ -6,6 +6,7 @@ from shot import Shot
 from turn import Turn
 from coordinates import Coordinates
 from grid import Grid
+from ai import AI
 
 
 
@@ -16,6 +17,7 @@ class TestSession(unittest.TestCase):
 
     def test_if_session_can_instantiate(self):
         self.assertIsInstance(self.session, Session)
+        self.assertIsInstance(self.session.ai, AI)
         self.assertTrue(callable(self.session.set_player_name))
         self.assertTrue(callable(self.session.add_player))
         self.assertTrue(callable(self.session.set_up_game))
@@ -26,6 +28,7 @@ class TestSession(unittest.TestCase):
         self.assertTrue(callable(self.session.place_ship_on_player_grid))
         self.assertTrue(callable(self.session.play_a_round))
         self.assertTrue(callable(self.session.play_a_turn))
+        self.assertTrue(callable(self.session.get_shot_from_player))
         self.assertTrue(callable(self.session.get_verified_shot))
         self.assertTrue(callable(self.session.verify_a_shot))
         self.assertTrue(callable(self.session.record_a_shot))
@@ -60,6 +63,7 @@ class TestSession(unittest.TestCase):
 
     def test_if_can_set_player_name(self):
         player = Player(' ', is_ai = False)
+        opponent = Player(' ', is_ai = True)
         def fake_set_player_name(self, player):
             player.name = 'fakename'
         with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
@@ -67,6 +71,8 @@ class TestSession(unittest.TestCase):
             session.set_player_name(player)
             self.assertTrue(len(player.name) >1)
         self.assertIsInstance(player.name, str)
+        self.session.set_player_name(opponent)
+        self.assertEqual(opponent.name, 'AI', 'opponent name should == AI')
 
     def test_if_can_add_player(self):
         player = Player(name = 'bob', is_ai = False)
@@ -112,6 +118,7 @@ class TestSession(unittest.TestCase):
 
     def test_place_all_ships(self):
         player = Player(name = 'bob', is_ai = False)
+        opponent = Player(name = 'AI', is_ai = True)
         def get_coordinates_from_player(self, player):
             return Grid.get_random_coordinates()
 
@@ -119,6 +126,14 @@ class TestSession(unittest.TestCase):
             session = Session()
             session.place_ships(player)
             self.assertEqual(len(player.grid.ships), 5)
+        self.session.place_ships(opponent)
+        self.assertEqual(len(opponent.grid.ships), 5)
+
+    def test_get_shot_from_player(self):
+        player, opponent = self.get_player_and_opponent()
+        player_shot = self.session.get_shot_from_player(player, opponent)
+        self.assertIsInstance(player_shot, dict)
+
 
     def test_is_shot_verified(self):
         player, shot = self.get_player_with_shot()

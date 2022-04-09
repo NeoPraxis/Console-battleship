@@ -44,6 +44,7 @@ class Grid:
 
     def is_ship_blocked(self, ship_coordinates: Coordinates):
         all_coordinates = self.get_all_ship_coordinates()
+        
         for coordinate in ship_coordinates:
             if coordinate in all_coordinates:
                 return True

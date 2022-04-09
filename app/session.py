@@ -4,12 +4,14 @@ from turn import Turn
 from ship import Ship
 from shot import Shot
 from grid import Grid
+from ai import AI
 
 class Session:
 
     def __init__(self):
         self.__players = []
         self.__turns = []
+        self.ai = AI()
 
     def start_new_game(self):
         self.set_up_game()
@@ -28,7 +30,10 @@ class Session:
         self.place_ships(opponent)
         
     def set_player_name(self, player: Player):
-        pass
+        if player.is_ai == True:
+            player.name = self.ai.get_name()
+        # else:
+        #     player.name = self.ui.get_name()
 
     def add_player(self, player: Player):
         if len(self.__players) >= 2:
@@ -39,6 +44,9 @@ class Session:
         return len(self.__players)
 
     def get_coordinates_from_player(self, player):
+        if player.is_ai == True:
+            location, orientation = self.ai.place_ship()
+            return location, orientation
         location={'y':'A', 'x':'1'}
         return location, 'h'
 
@@ -78,13 +86,19 @@ class Session:
         is_game_over = self.is_game_over()
         return is_game_over
 
+    def get_shot_from_player(self, player: Player, opponent: Player):
+        if player.is_ai == True:
+            location = self.ai.get_shot()
+        else:
+            # TODO UI get shot (UPDATE LATER)
+            location, orientation = Grid.get_random_coordinates()  
+        return location
+
     def get_verified_shot(self, player: Player, opponent: Player) -> Shot:
         shot = None
         is_shot_verified = False
         while not is_shot_verified:
-            # TODO get a shot from AI or UI
-            player_response = Grid.get_random_coordinates()
-            xy_coordinates = player_response[0]
+            xy_coordinates = self.get_shot_from_player(player, opponent)
             shot_coordinates = Coordinates(xy_coordinates)
             shot = Shot(shot_coordinates)
             is_shot_verified = self.verify_a_shot(shot, opponent)
