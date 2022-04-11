@@ -1,3 +1,4 @@
+from subprocess import call
 import unittest, io
 from unittest.mock import patch
 from console_ui import ConsoleUI
@@ -24,6 +25,9 @@ class TestConsoleUI(unittest.TestCase):
         self.assertTrue(callable(self.console_ui.print_xy))
         self.assertTrue(callable(self.console_ui.listen_for_keyboard_events))
         self.assertTrue(callable(self.console_ui.on_press))
+        self.assertIsInstance(self.console_ui.keystrokes, str)
+        self.assertTrue(callable(self.console_ui.input))
+
 
     @patch('sys.stdout', new_callable=io.StringIO)
     def test_print_xy_outputs_to_specified_location_in_console(self, mock_out):
@@ -34,6 +38,9 @@ class TestConsoleUI(unittest.TestCase):
     
     @patch('sys.stdout', new_callable=io.StringIO)
     def test_listen_for_keyboard_input(self, mock_out):
-        self.press('W')
-        output = mock_out.getvalue()
-        self.assertIn('W', output)
+        # self.press('W')
+        def set_response():
+            self.console_ui.keystrokes = 'W'
+        Timer(0.005, set_response).start()
+        input = self.console_ui.input()
+        self.assertIn('W', input)

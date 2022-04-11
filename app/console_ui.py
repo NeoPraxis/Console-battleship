@@ -1,4 +1,4 @@
-import sys
+import sys, copy
 from pynput.keyboard import Listener
 
 
@@ -6,6 +6,7 @@ class ConsoleUI:
     
     def __init__(self):
         self.listen_for_keyboard_events()
+        self.keystrokes = ''
 
     def print_xy(self, x, y, text):
         # Found this example to solve my printing issues in the console
@@ -19,8 +20,12 @@ class ConsoleUI:
         self.listener.start()
 
     def on_press(self, key):
-        try:
-            self.print_xy(1, 1, key.char)
-        except AttributeError:
-            self.print_xy(1, 1, 'special key {0} pressed'.format(
-                key))
+        self.keystrokes += key.char
+        
+    def input(self):
+        while not self.keystrokes:
+            pass
+        keystrokes = copy.deepcopy(self.keystrokes)
+        self.keystrokes = ''
+        return keystrokes
+        
