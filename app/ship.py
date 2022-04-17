@@ -17,3 +17,4 @@ class Ship:
         if self.size != len(coordinates):
             raise TypeError(f'{self.model} requires {self.size} coordinates')
         self.coordinates = coordinates
+    
