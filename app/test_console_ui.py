@@ -9,17 +9,21 @@ from threading import Timer
 class TestConsoleUI(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.console_ui = ConsoleUI(self.on_navigation, self.on_escape)
+        self.console_ui = ConsoleUI(self.on_navigation, self.on_escape, self.on_space)
         self.keyboard = Controller()
         self.time = 0
         self.handled_navigation_key = False
         self.handled_escape_key = False
+        self.handled_space_key = False
 
     def on_navigation(self, navigation_key):
         self.handled_navigation_key = True
 
     def on_escape(self, escape_key):
         self.handled_escape_key = True
+
+    def on_space(self, space_key):
+        self.handled_space_key = True
 
     def press(self, key):
         self.time += 0.2
@@ -90,10 +94,6 @@ class TestConsoleUI(unittest.TestCase):
         self.assertEqual(self.console_ui.keystrokes, '')
         self.assertEqual(self.console_ui.accepted_input, accepted_input)
 
-
-    def test_when_spacebar_pressed_orientation_of_ship_toggles(self):
-        pass
-
     def test_when_escape_key_pressed_stores_exit_in_input_return_value(self):
         self.console_ui.on_press('Key.esc')
         self.assertEqual(self.handled_escape_key, True)
@@ -119,3 +119,7 @@ class TestConsoleUI(unittest.TestCase):
     def test_handle_cursor_movement_moves_cursor_when_arrow_key_is_pressed(self):
         self.console_ui.on_press('Key.up')
         self.assertEqual(self.handled_navigation_key, True)
+
+    def test_on_space_is_called_when_space_bar_is_pressed(self):
+        self.console_ui.on_press('Key.space')
+        self.assertEqual(self.handled_space_key, True)

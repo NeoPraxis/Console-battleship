@@ -37,3 +37,5 @@ class TestUI(unittest.TestCase):
     def test_console_clears_screen_to_refresh_ui_display_properly(self):
         pass
         
+    def test_when_spacebar_pressed_orientation_of_ship_toggles(self):
+        pass

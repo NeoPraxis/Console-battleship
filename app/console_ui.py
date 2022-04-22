@@ -4,13 +4,14 @@ from pynput.keyboard import Listener
 
 class ConsoleUI:
     
-    def __init__(self, on_navigation = None, on_escape = None):
+    def __init__(self, on_navigation = None, on_escape = None, on_space = None):
         self.listen_for_keyboard_events()
         self.keystrokes = ''
         self.accepted_input = ''
         self.single_character_input = True
         self.on_navigation = on_navigation
         self.on_escape = on_escape
+        self.on_space = on_space
 
     def print_xy(self, x, y, text):
         # Found this example to solve my printing issues in the console
@@ -34,6 +35,8 @@ class ConsoleUI:
                 self.accept_and_clear_input()
         if key == 'Key.enter':
             self.accept_and_clear_input()
+        if key == 'Key.space' and self.on_space is not None:
+            self.on_space(key)
         if key == 'Key.esc' and self.on_escape is not None:
             self.on_escape(key)
         
