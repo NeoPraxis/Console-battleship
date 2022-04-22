@@ -1,14 +1,16 @@
-import sys, copy
-#from pynput.keyboard import Listener
+import sys, copy, time
+from pynput.keyboard import Listener
 
 
 class ConsoleUI:
     
-    def __init__(self):
-        #self.listen_for_keyboard_events()
+    def __init__(self, on_navigation = None, on_escape = None):
+        self.listen_for_keyboard_events()
         self.keystrokes = ''
-        self.input_return_value = ''
+        self.accepted_input = ''
         self.single_character_input = True
+        self.on_navigation = on_navigation
+        self.on_escape = on_escape
 
     def print_xy(self, x, y, text):
         # Found this example to solve my printing issues in the console
@@ -16,25 +18,36 @@ class ConsoleUI:
         sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (x, y, text))
         sys.stdout.flush()
 
-    # def listen_for_keyboard_events(self):
-    #     self.listener = Listener(
-    #         on_press = self.on_press)
-    #     self.listener.start()
+    def listen_for_keyboard_events(self):
+        self.listener = Listener(
+            on_press = self.on_press)
+        self.listener.start()
 
     def on_press(self, key):
-        self.keystrokes += str(key).replace("'", "")
-        self.input_return_value = self.keystrokes
-        # Check for navigation keys (arrows) 
-        # Check for enter key (confirm selection)
-        # Check for escape key (exit)
-        # Check for alphanum and spaces (name) (can use .upper/ .lower)
+        key = str(key).replace("'", "")
+        self.accepted_input = self.keystrokes
+        if self.is_navigation_key(key) and self.on_navigation is not None:
+            self.on_navigation(key)
+        if self.is_alphanumeric_or_space(key):
+            self.keystrokes += key
+            if self.single_character_input:
+                self.accept_and_clear_input()
+        if key == 'Key.enter':
+            self.accept_and_clear_input()
+        if key == 'Key.esc' and self.on_escape is not None:
+            self.on_escape(key)
+        
+    def accept_and_clear_input(self):
+        self.accepted_input = self.keystrokes
+        self.keystrokes = ''
+        return self.accepted_input
 
     def input(self, single_character_input = True):
         self.single_character_input = single_character_input
-        while not self.input_return_value:
-            pass
-        input_return_value = copy.deepcopy(self.input_return_value)
-        self.input_return_value = ''
+        while not self.accepted_input:
+            time.sleep(0.10)
+        input_return_value = copy.deepcopy(self.accepted_input)
+        self.accepted_input = ''
         return input_return_value
     
     def is_alphanumeric_or_space(self, char: str):
@@ -42,3 +55,7 @@ class ConsoleUI:
        is_space = char.isspace()
        return is_alphanumeric or is_space
         
+    def is_navigation_key(self, key):
+        navigation_keys = ['Key.up', 'Key.down', 'Key.left', 'Key.right']
+        return key in navigation_keys
+
