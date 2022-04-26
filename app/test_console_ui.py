@@ -49,6 +49,7 @@ class TestConsoleUI(unittest.TestCase):
         self.assertTrue(callable(self.console_ui.is_navigation_key))
         self.assertTrue(callable(self.console_ui.hide_cursor))
         self.assertTrue(callable(self.console_ui.show_cursor))
+        self.assertTrue(callable(self.console_ui.clear_screen))
 
 
     @patch('sys.stdout', new_callable=io.StringIO)
@@ -149,5 +150,13 @@ class TestConsoleUI(unittest.TestCase):
         # https://stackoverflow.com/questions/5174810/how-to-turn-off-blinking-cursor-in-command-window#:~:text=Just%20use%20print('%5C033,%2C%20end%3D%22%22)%20.
         # hides cursor print('\033[?25l', end="")
         # shows cursor print('\033[?25h', end="")
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_clear_screen_clears_screen_and_stdout(self, mock_out):
+        self.get_name()
+        self.console_ui.clear_screen(mock_out)
+        output = mock_out.getvalue()
+        self.assertEqual(output, '')
     
-    
+
+

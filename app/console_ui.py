@@ -1,5 +1,7 @@
-import sys, copy, time
+import sys, copy, time, io
 from pynput.keyboard import Listener
+from os import system, name
+
 
 
 class ConsoleUI:
@@ -17,8 +19,6 @@ class ConsoleUI:
         self.console_width = None
 
     def print_xy(self, x, y, text, width = None):
-        self.console_x = x
-        self.console_y = y
         self.console_width = width
 
         if width:
@@ -44,8 +44,8 @@ class ConsoleUI:
             if self.single_character_input:
                 self.accept_and_clear_input()
             else:
-                self.print_xy(self.console_x, self.console_y + 1, self.keystrokes, self.console_width)
-                
+                self.print_xy(self.console_x, self.console_y, self.keystrokes, self.console_width)
+
         if key == 'Key.enter':
             self.accept_and_clear_input()
         if key == 'Key.space' and self.on_space is not None:
@@ -58,8 +58,12 @@ class ConsoleUI:
         self.keystrokes = ''
         return self.accepted_input
 
-    def input(self, single_character_input = True):
+    def input(self, single_character_input = True, cursor_position = None):
         self.single_character_input = single_character_input
+        if cursor_position:
+            self.console_x = cursor_position['x']
+            self.console_y = cursor_position['y']
+
         while not self.accepted_input:
             time.sleep(0.10)
         input_return_value = copy.deepcopy(self.accepted_input)
@@ -80,3 +84,18 @@ class ConsoleUI:
 
     def show_cursor(self):
         print('\033[?25h', end="")
+
+    def clear_screen(self, stdout: io.StringIO = None):
+        # for windows 
+        if name == 'nt':
+            _ = system('cls')
+        if stdout:
+            stdout.seek(0)
+            stdout.truncate(0)
+        else:
+            sys.stdout.flush()
+
+    
+        # for mac and linux(here, os.name is 'posix')
+        # else:
+        #     _ = system('clear')
