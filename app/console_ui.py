@@ -12,8 +12,14 @@ class ConsoleUI:
         self.on_navigation = on_navigation
         self.on_escape = on_escape
         self.on_space = on_space
+        self.console_x = 0
+        self.console_y = 0
+        self.console_width = None
 
     def print_xy(self, x, y, text, width = None):
+        self.console_x = x
+        self.console_y = y
+        self.console_width = width
 
         if width:
             text = text.center(width)
@@ -37,6 +43,9 @@ class ConsoleUI:
             self.keystrokes += key
             if self.single_character_input:
                 self.accept_and_clear_input()
+            else:
+                self.print_xy(self.console_x, self.console_y + 1, self.keystrokes, self.console_width)
+                
         if key == 'Key.enter':
             self.accept_and_clear_input()
         if key == 'Key.space' and self.on_space is not None:
