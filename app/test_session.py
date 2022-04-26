@@ -7,6 +7,8 @@ from turn import Turn
 from coordinates import Coordinates
 from grid import Grid
 from ai import AI
+from threading import Timer
+from ui import UI
 
 
 
@@ -18,6 +20,7 @@ class TestSession(unittest.TestCase):
     def test_if_session_can_instantiate(self):
         self.assertIsInstance(self.session, Session)
         self.assertIsInstance(self.session.ai, AI)
+        self.assertIsInstance(self.session.ui, UI)
         self.assertTrue(callable(self.session.set_player_name))
         self.assertTrue(callable(self.session.add_player))
         self.assertTrue(callable(self.session.set_up_game))
@@ -64,12 +67,12 @@ class TestSession(unittest.TestCase):
     def test_if_can_set_player_name(self):
         player = Player(' ', is_ai = False)
         opponent = Player(' ', is_ai = True)
-        def fake_set_player_name(self, player):
-            player.name = 'fakename'
-        with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
-            session = Session()
-            session.set_player_name(player)
-            self.assertTrue(len(player.name) >1)
+
+        def set_response():
+            self.session.ui.console_ui.accepted_input = 'Bob'
+        Timer(0.2, set_response).start()
+        self.session.set_player_name(player)
+        self.assertTrue(len(player.name) >1)
         self.assertIsInstance(player.name, str)
         self.session.set_player_name(opponent)
         self.assertEqual(opponent.name, 'AI', 'opponent name should == AI')

@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import patch
+from threading import Timer
+from console_ui import ConsoleUI
 from ui import UI
 
 class TestUI(unittest.TestCase):
@@ -9,10 +11,16 @@ class TestUI(unittest.TestCase):
 
     def test_if_ui_can_instantiate(self):
         self.assertIsInstance(self.ui, UI)
+        self.assertIsInstance(self.ui.console_ui, ConsoleUI)
         self.assertTrue(callable(self.ui.get_name))
     
     def test_get_name(self):
-        pass
+        def set_response():
+            self.ui.console_ui.accepted_input = 'Bob'
+        Timer(0.2, set_response).start()
+        name = self.ui.get_name()
+        self.assertEqual(name, 'Bob')
+        
 
     def test_up_down_left_right_arrow_keys_moves_cursor_and_stores_coordinates(self):
         pass

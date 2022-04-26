@@ -5,6 +5,7 @@ from ship import Ship
 from shot import Shot
 from grid import Grid
 from ai import AI
+from ui import UI
 
 class Session:
 
@@ -12,6 +13,7 @@ class Session:
         self.__players = []
         self.__turns = []
         self.ai = AI()
+        self.ui = UI()
 
     def start_new_game(self):
         self.set_up_game()
@@ -32,8 +34,8 @@ class Session:
     def set_player_name(self, player: Player):
         if player.is_ai == True:
             player.name = self.ai.get_name()
-        # else:
-        #     player.name = self.ui.get_name()
+        else:
+            player.name = self.ui.get_name()
 
     def add_player(self, player: Player):
         if len(self.__players) >= 2:
