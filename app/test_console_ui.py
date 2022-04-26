@@ -123,3 +123,11 @@ class TestConsoleUI(unittest.TestCase):
     def test_on_space_is_called_when_space_bar_is_pressed(self):
         self.console_ui.on_press('Key.space')
         self.assertEqual(self.handled_space_key, True)
+
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_text_is_centered_if_specified_width_is_recieved_as_argument(self, mock_out):
+        self.console_ui.print_xy(1, 1, 'What is your name?: ', 60)
+        output = mock_out.getvalue()
+        self.assertIn(                     'What is your name?:                    ', output)
+    
+    

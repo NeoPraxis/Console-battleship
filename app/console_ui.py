@@ -13,7 +13,11 @@ class ConsoleUI:
         self.on_escape = on_escape
         self.on_space = on_space
 
-    def print_xy(self, x, y, text):
+    def print_xy(self, x, y, text, width = None):
+
+        if width:
+            text = text.center(width)
+            
         # Found this example to solve my printing issues in the console
         # https://stackoverflow.com/questions/7392779/is-it-possible-to-print-a-string-at-a-certain-screen-position-inside-idle
         sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (x, y, text))
