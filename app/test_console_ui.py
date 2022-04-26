@@ -44,6 +44,8 @@ class TestConsoleUI(unittest.TestCase):
         self.assertTrue(callable(self.console_ui.is_alphanumeric_or_space))
         self.assertTrue(callable(self.console_ui.accept_and_clear_input))
         self.assertTrue(callable(self.console_ui.is_navigation_key))
+        self.assertTrue(callable(self.console_ui.hide_cursor))
+        self.assertTrue(callable(self.console_ui.show_cursor))
 
 
     @patch('sys.stdout', new_callable=io.StringIO)
@@ -128,6 +130,12 @@ class TestConsoleUI(unittest.TestCase):
     def test_text_is_centered_if_specified_width_is_recieved_as_argument(self, mock_out):
         self.console_ui.print_xy(1, 1, 'What is your name?: ', 60)
         output = mock_out.getvalue()
-        self.assertIn(                     'What is your name?:                    ', output)
+        self.assertIn('                    What is your name?:                     ', output)
+
+    def test_display_test_and_hide_cursor(self):
+        pass
+        # https://stackoverflow.com/questions/5174810/how-to-turn-off-blinking-cursor-in-command-window#:~:text=Just%20use%20print('%5C033,%2C%20end%3D%22%22)%20.
+        # hides cursor print('\033[?25l', end="")
+        # shows cursor print('\033[?25h', end="")
     
     

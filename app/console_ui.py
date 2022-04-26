@@ -17,7 +17,7 @@ class ConsoleUI:
 
         if width:
             text = text.center(width)
-            
+
         # Found this example to solve my printing issues in the console
         # https://stackoverflow.com/questions/7392779/is-it-possible-to-print-a-string-at-a-certain-screen-position-inside-idle
         sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (x, y, text))
@@ -66,3 +66,8 @@ class ConsoleUI:
         navigation_keys = ['Key.up', 'Key.down', 'Key.left', 'Key.right']
         return key in navigation_keys
 
+    def hide_cursor(self):
+        print('\033[?25l', end="")
+
+    def show_cursor(self):
+        print('\033[?25h', end="")
