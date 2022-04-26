@@ -25,9 +25,6 @@ class TestUI(unittest.TestCase):
     def test_up_down_left_right_arrow_keys_moves_cursor_and_stores_coordinates(self):
         pass
 
-    def test_display_input_buffer_shows_text_while_typing(self):
-        pass
-
     def test_prompt_for_coordinates_returns_current_cursor_position(self):
         pass
 
