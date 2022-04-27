@@ -114,7 +114,7 @@ class TestConsoleUI(unittest.TestCase):
         self.assertTrue(navigation_key_pressed)
         navigation_key_pressed = self.console_ui.is_navigation_key('Key.right')
         self.assertTrue(navigation_key_pressed)
-        navigation_key_pressed = self.console_ui.is_navigation_key('Key.spacebar')
+        navigation_key_pressed = self.console_ui.is_navigation_key('Key.space')
         self.assertFalse(navigation_key_pressed)
         navigation_key_pressed = self.console_ui.is_navigation_key('Key.esc')
         self.assertFalse(navigation_key_pressed)
@@ -129,7 +129,7 @@ class TestConsoleUI(unittest.TestCase):
         self.assertEqual(self.handled_navigation_key, True)
 
     def test_on_space_is_called_when_space_bar_is_pressed(self):
-        Timer(0.2, lambda: self.console_ui.on_press('Key.spacebar')).start()
+        Timer(0.2, lambda: self.console_ui.on_press('Key.space')).start()
         self.console_ui.input()
         self.assertEqual(self.handled_space_key, True)
 

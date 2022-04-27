@@ -30,10 +30,10 @@ class TestUI(unittest.TestCase):
     def test_display_place_ship_instructions_prints_to_console(self, mock_out):
         self.ui.place_ship('Destroyer')
         output = mock_out.getvalue()
-        self.assertIn('1: Place your Destroyer.', output)
-        self.assertIn('2: Move arrow keys to navigate position.', output)
-        self.assertIn('3: Press spacebar to change orientation.', output)
-        self.assertIn('4: Press enter to place your Destroyer.', output)
+        self.assertIn('1: Place your Destroyer', output)
+        self.assertIn('2: Move arrow keys to navigate position', output)
+        self.assertIn('3: Press spacebar to change orientation', output)
+        self.assertIn('4: Press enter to place your Destroyer', output)
 
 
     def test_up_down_left_right_arrow_keys_moves_cursor_and_stores_coordinates(self):
