@@ -1,4 +1,4 @@
-import unittest
+import unittest, io
 from unittest.mock import patch
 from threading import Timer
 from console_ui import ConsoleUI
@@ -13,14 +13,28 @@ class TestUI(unittest.TestCase):
         self.assertIsInstance(self.ui, UI)
         self.assertIsInstance(self.ui.console_ui, ConsoleUI)
         self.assertTrue(callable(self.ui.get_name))
+        self.assertTrue(callable(self.ui.display_place_ship_instructions))
+        self.assertTrue(callable(self.ui.place_ship))
     
-    def test_get_name(self):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_get_name(self, mock_out):
         def set_response():
             self.ui.console_ui.accepted_input = 'Bob'
         Timer(0.2, set_response).start()
         name = self.ui.get_name()
+        output = mock_out.getvalue()
         self.assertEqual(name, 'Bob')
-        
+        self.assertIn('What is your name?: ', output)
+
+    @patch('sys.stdout', new_callable=io.StringIO)  
+    def test_display_place_ship_instructions_prints_to_console(self, mock_out):
+        self.ui.place_ship('Destroyer')
+        output = mock_out.getvalue()
+        self.assertIn('1: Place your Destroyer.', output)
+        self.assertIn('2: Move arrow keys to navigate position.', output)
+        self.assertIn('3: Press spacebar to change orientation.', output)
+        self.assertIn('4: Press enter to place your Destroyer.', output)
+
 
     def test_up_down_left_right_arrow_keys_moves_cursor_and_stores_coordinates(self):
         pass

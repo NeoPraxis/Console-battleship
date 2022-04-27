@@ -90,7 +90,7 @@ class TestConsoleUI(unittest.TestCase):
         
         
     def test_when_enter_key_pressed_keystrokes_are_stored_in_input_return_value(self):
-        Timer(0.1, lambda: self.console_ui.on_press('a')).start()
+        Timer(0.5, lambda: self.console_ui.on_press('a')).start()
         Timer(0.6, lambda: self.console_ui.on_press('Key.enter')).start()
         input_value = self.console_ui.input()
         self.assertEqual(input_value, 'a')
@@ -101,7 +101,8 @@ class TestConsoleUI(unittest.TestCase):
         self.assertEqual(self.console_ui.accepted_input, accepted_input)
 
     def test_when_escape_key_pressed_stores_exit_in_input_return_value(self):
-        self.console_ui.on_press('Key.esc')
+        Timer(0.2, lambda: self.console_ui.on_press('Key.esc')).start()
+        self.console_ui.input()
         self.assertEqual(self.handled_escape_key, True)
 
     def test_is_navigation_key_returns_true_if_arrows_are_pressed(self):
@@ -123,11 +124,13 @@ class TestConsoleUI(unittest.TestCase):
         self.assertFalse(navigation_key_pressed)
 
     def test_handle_cursor_movement_moves_cursor_when_arrow_key_is_pressed(self):
-        self.console_ui.on_press('Key.up')
+        Timer(0.2, lambda: self.console_ui.on_press('Key.up')).start()
+        self.console_ui.input()
         self.assertEqual(self.handled_navigation_key, True)
 
     def test_on_space_is_called_when_space_bar_is_pressed(self):
-        self.console_ui.on_press('Key.space')
+        Timer(0.2, lambda: self.console_ui.on_press('Key.spacebar')).start()
+        self.console_ui.input()
         self.assertEqual(self.handled_space_key, True)
 
     @patch('sys.stdout', new_callable=io.StringIO)

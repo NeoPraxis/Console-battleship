@@ -2,11 +2,10 @@ import sys, copy, time, io
 from pynput.keyboard import Listener
 from os import system, name
 
-
-
 class ConsoleUI:
     
     def __init__(self, on_navigation = None, on_escape = None, on_space = None):
+        self.listening = False
         self.listen_for_keyboard_events()
         self.keystrokes = ''
         self.accepted_input = ''
@@ -35,9 +34,12 @@ class ConsoleUI:
         self.listener.start()
 
     def on_press(self, key):
+        if not self.listening:
+            return
         key = str(key).replace("'", "")
-        self.accepted_input = self.keystrokes
         if self.is_navigation_key(key) and self.on_navigation is not None:
+            self.keystrokes = key
+            self.accept_and_clear_input()
             self.on_navigation(key)
         if self.is_alphanumeric_or_space(key):
             self.keystrokes += key
@@ -49,8 +51,12 @@ class ConsoleUI:
         if key == 'Key.enter':
             self.accept_and_clear_input()
         if key == 'Key.space' and self.on_space is not None:
+            self.keystrokes = key
+            self.accept_and_clear_input()
             self.on_space(key)
         if key == 'Key.esc' and self.on_escape is not None:
+            self.keystrokes = key
+            self.accept_and_clear_input()
             self.on_escape(key)
         
     def accept_and_clear_input(self):
@@ -59,6 +65,7 @@ class ConsoleUI:
         return self.accepted_input
 
     def input(self, single_character_input = True, cursor_position = None):
+        self.listening = True
         self.single_character_input = single_character_input
         if cursor_position:
             self.console_x = cursor_position['x']
@@ -68,6 +75,7 @@ class ConsoleUI:
             time.sleep(0.10)
         input_return_value = copy.deepcopy(self.accepted_input)
         self.accepted_input = ''
+        self.listening = False
         return input_return_value
     
     def is_alphanumeric_or_space(self, char: str):

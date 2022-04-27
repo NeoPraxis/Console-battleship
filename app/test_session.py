@@ -1,5 +1,6 @@
-import unittest
+import unittest, io
 from unittest import mock
+from unittest.mock import patch
 from session import Session
 from player import Player
 from shot import Shot
@@ -64,18 +65,21 @@ class TestSession(unittest.TestCase):
             session.place_ships(opponent)
         return player, opponent
 
-    def test_if_can_set_player_name(self):
+    @patch('sys.stdout', new_callable=io.StringIO)  
+    def test_if_can_set_player_name(self, mock_out):
         player = Player(' ', is_ai = False)
         opponent = Player(' ', is_ai = True)
-
         def set_response():
             self.session.ui.console_ui.accepted_input = 'Bob'
         Timer(0.2, set_response).start()
         self.session.set_player_name(player)
         self.assertTrue(len(player.name) >1)
         self.assertIsInstance(player.name, str)
+        output = mock_out.getvalue()
+        self.assertIn('What is your name?: ', output)
         self.session.set_player_name(opponent)
         self.assertEqual(opponent.name, 'AI', 'opponent name should == AI')
+        
 
     def test_if_can_add_player(self):
         player = Player(name = 'bob', is_ai = False)
