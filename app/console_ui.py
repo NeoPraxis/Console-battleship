@@ -34,8 +34,8 @@ class ConsoleUI:
         self.listener.start()
 
     def on_press(self, key):
-        if not self.listening:
-            return
+        #if not self.listening:
+        #    return
         key = str(key).replace("'", "")
         if self.is_navigation_key(key) and self.on_navigation is not None:
             self.keystrokes = key
@@ -65,7 +65,7 @@ class ConsoleUI:
         return self.accepted_input
 
     def input(self, single_character_input = True, cursor_position = None):
-        self.listening = True
+        #self.listening = True
         self.single_character_input = single_character_input
         if cursor_position:
             self.console_x = cursor_position['x']
@@ -75,7 +75,7 @@ class ConsoleUI:
             time.sleep(0.10)
         input_return_value = copy.deepcopy(self.accepted_input)
         self.accepted_input = ''
-        self.listening = False
+        #self.listening = False
         return input_return_value
     
     def is_alphanumeric_or_space(self, char: str):

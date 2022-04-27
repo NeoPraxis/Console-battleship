@@ -49,8 +49,8 @@ class Session:
         if player.is_ai == True:
             location, orientation = self.ai.place_ship()
             return location, orientation
-    
-        return self.ui.place_ship()
+        location={'y':'A', 'x':'1'}
+        return location, 'h'
 
     def place_ship_on_player_grid(self, player, model):
         location, orientation = self.get_coordinates_from_player(player)
