@@ -119,6 +119,7 @@ class TestSession(unittest.TestCase):
     def test_if_can_place_ship_on_player_grid(self):
         player = Player(name = 'bob', is_ai = False)
         model = 'Destroyer'
+        Timer(0.5, lambda: self.session.ui.console_ui.on_press('Key.enter')).start()
         ship_placed = self.session.place_ship_on_player_grid(player, model)
         self.assertTrue(ship_placed)
         self.assertEqual(len(player.grid.ships), 1)

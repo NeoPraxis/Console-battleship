@@ -39,6 +39,7 @@ class TestUI(unittest.TestCase):
     @patch('sys.stdout', new_callable=io.StringIO)  
     def test_display_place_ship_instructions_prints_to_console(self, mock_out):
         player = Player('Bob', is_ai = False)
+        Timer(0.5, lambda: self.ui.console_ui.on_press('Key.enter')).start()
         self.ui.place_ship('Destroyer', player)
         output = mock_out.getvalue()
         self.assertIn('1: Place your Destroyer', output)

@@ -8,6 +8,7 @@ class UI:
         self.console_ui = ConsoleUI()
         self.cursor = {'y':'A', 'x':'1'}
         self.orientation = 'h'
+        self.player = None
 
     def get_name(self):
         self.console_ui.clear_screen()
@@ -25,6 +26,7 @@ class UI:
         self.console_ui.print_xy(4, 1, f'4: Press enter to place your {model}.', 60)
     
     def place_ship(self, model: str, player: Player):
+        self.player = player
         self.display_place_ship_instructions(model)
         self.print_grid(player)
         self.console_ui.input(on_navigation = self.on_navigation, on_space = self.on_space, on_enter = self.on_enter)
@@ -75,8 +77,13 @@ class UI:
         if 'Key.up' == key and y_index > 0:
             self.cursor['y'] = Grid.y[y_index - 1]
 
+        if self.player:
+            self.print_grid(self.player)
+
     def on_space(self, key):
         self.orientation = 'v' if self.orientation == 'h' else 'h'
+        if self.player:
+            self.print_grid(self.player)
 
     def on_enter(self, key):
         pass 

@@ -59,7 +59,7 @@ class ConsoleUI:
             self.keystrokes = key
             self.accept_and_clear_input()
             if self.on_space:
-                self.on_space(key)
+                self.on_space(key) 
         if key == 'Key.esc' and self.on_escape is not None:
             self.keystrokes = key
             self.accept_and_clear_input()
