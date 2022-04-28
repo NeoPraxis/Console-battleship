@@ -27,6 +27,8 @@ class UI:
     def place_ship(self, model: str, player: Player):
         self.display_place_ship_instructions(model)
         self.print_grid(player)
+        self.console_ui.input(on_navigation = self.on_navigation, on_space = self.on_space, on_enter = self.on_enter)
+        return self.cursor, self.orientation
 
     def print_grid(self, player):
         grid_header = '   '.join(Grid.x)
@@ -58,7 +60,23 @@ class UI:
         return f'[{grid_content}]' if is_cursor else f' {grid_content} '
 
     def on_navigation(self, key):
-        if 'Key.right' == key:
-            x_index = Grid.x.index(self.cursor['x'])
-            if x_index < len(Grid.x):
-                self.cursor['x'] = Grid.x[x_index + 1]
+        x_index = Grid.x.index(self.cursor['x'])
+        y_index = Grid.y.index(self.cursor['y'])
+
+        if 'Key.right' == key and x_index < len(Grid.x) - 1:
+            self.cursor['x'] = Grid.x[x_index + 1]
+        
+        if 'Key.left' == key and x_index > 0:
+            self.cursor['x'] = Grid.x[x_index - 1]
+
+        if 'Key.down' == key and y_index < len(Grid.y) - 1:
+            self.cursor['y'] = Grid.y[y_index + 1]
+
+        if 'Key.up' == key and y_index > 0:
+            self.cursor['y'] = Grid.y[y_index - 1]
+
+    def on_space(self, key):
+        self.orientation = 'v' if self.orientation == 'h' else 'h'
+
+    def on_enter(self, key):
+        pass 

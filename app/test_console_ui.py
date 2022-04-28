@@ -1,4 +1,4 @@
-from subprocess import call
+
 import unittest, io
 from unittest.mock import patch
 from console_ui import ConsoleUI
@@ -9,12 +9,13 @@ from threading import Timer
 class TestConsoleUI(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.console_ui = ConsoleUI(self.on_navigation, self.on_escape, self.on_space)
+        self.console_ui = ConsoleUI(self.on_navigation, self.on_escape, self.on_space, self.on_enter)
         self.keyboard = Controller()
         self.time = 0
         self.handled_navigation_key = False
         self.handled_escape_key = False
         self.handled_space_key = False
+        self.handled_enter_key = False
 
     def get_name(self):
         self.console_ui.print_xy(1, 1, 'What is your name?: ', 60)
@@ -28,6 +29,9 @@ class TestConsoleUI(unittest.TestCase):
     def on_space(self, space_key):
         self.handled_space_key = True
 
+    def on_enter(self, enter_key):
+        self.handled_enter_key = True
+
     def press(self, key):
         self.time += 0.2
         Timer(self.time, self.keyboard.press, ([key])).start()
@@ -37,13 +41,17 @@ class TestConsoleUI(unittest.TestCase):
     def test_if_console_ui_can_instantiate(self):
         
         self.assertIsInstance(self.console_ui, ConsoleUI)
+        self.assertIsInstance(self.console_ui.keystrokes, str)
+        self.assertIsInstance(self.console_ui.single_character_input, bool)
+        self.assertIsInstance(self.console_ui.accepted_input, str)
+        self.assertTrue(callable(self.console_ui.on_navigation))
+        self.assertTrue(callable(self.console_ui.on_space))
+        self.assertTrue(callable(self.console_ui.on_escape))
+        self.assertTrue(callable(self.console_ui.on_enter))
         self.assertTrue(callable(self.console_ui.print_xy))
         self.assertTrue(callable(self.console_ui.listen_for_keyboard_events))
         self.assertTrue(callable(self.console_ui.on_press))
-        self.assertIsInstance(self.console_ui.keystrokes, str)
-        self.assertIsInstance(self.console_ui.single_character_input, bool)
         self.assertTrue(callable(self.console_ui.input))
-        self.assertIsInstance(self.console_ui.accepted_input, str)
         self.assertTrue(callable(self.console_ui.is_alphanumeric_or_space))
         self.assertTrue(callable(self.console_ui.accept_and_clear_input))
         self.assertTrue(callable(self.console_ui.is_navigation_key))

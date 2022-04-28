@@ -23,6 +23,8 @@ class TestUI(unittest.TestCase):
         self.assertTrue(callable(self.ui.print_grid))
         self.assertTrue(callable(self.ui.get_grid_content))
         self.assertTrue(callable(self.ui.on_navigation))
+        self.assertTrue(callable(self.ui.on_space))
+        self.assertTrue(callable(self.ui.on_enter))
     
     @patch('sys.stdout', new_callable=io.StringIO)
     def test_get_name(self, mock_out):
@@ -86,6 +88,21 @@ class TestUI(unittest.TestCase):
     def test_up_down_left_right_arrow_keys_moves_cursor_and_stores_coordinates(self):
         self.ui.on_navigation('Key.right')
         self.assertEqual(self.ui.cursor, {'y':'A', 'x':'2'})
+        self.ui.on_navigation('Key.left')
+        self.assertEqual(self.ui.cursor, {'y':'A', 'x':'1'})
+        self.ui.on_navigation('Key.down')
+        self.assertEqual(self.ui.cursor, {'y':'B', 'x':'1'})
+        self.ui.on_navigation('Key.up')
+        self.assertEqual(self.ui.cursor, {'y':'A', 'x':'1'})
+        self.ui.on_navigation('Key.up')
+        self.assertEqual(self.ui.cursor, {'y':'A', 'x':'1'})
+        
+    def test_spacebar_changes_orientation(self):
+        self.ui.on_space('Key.space')
+        self.assertEqual(self.ui.orientation, 'v')
+
+    def test_enter_returns_coordinates_and_orientation(self):
+        pass
 
     def test_prompt_for_coordinates_returns_current_cursor_position(self):
         pass

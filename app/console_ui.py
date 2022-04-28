@@ -4,7 +4,7 @@ from os import system, name
 
 class ConsoleUI:
     
-    def __init__(self, on_navigation = None, on_escape = None, on_space = None):
+    def __init__(self, on_navigation = None, on_escape = None, on_space = None, on_enter = None):
         self.listening = False
         self.listen_for_keyboard_events()
         self.keystrokes = ''
@@ -13,6 +13,7 @@ class ConsoleUI:
         self.on_navigation = on_navigation
         self.on_escape = on_escape
         self.on_space = on_space
+        self.on_enter = on_enter
         self.console_x = 0
         self.console_y = 0
         self.console_width = None
@@ -40,7 +41,8 @@ class ConsoleUI:
         if self.is_navigation_key(key) and self.on_navigation is not None:
             self.keystrokes = key
             self.accept_and_clear_input()
-            self.on_navigation(key)
+            if self.on_navigation:
+                self.on_navigation(key)
         if self.is_alphanumeric_or_space(key):
             self.keystrokes += key
             if self.single_character_input:
@@ -49,22 +51,38 @@ class ConsoleUI:
                 self.print_xy(self.console_x, self.console_y, self.keystrokes, self.console_width)
 
         if key == 'Key.enter':
+            if self.on_enter:
+                self.keystrokes = key
+                self.on_enter(key)
             self.accept_and_clear_input()
         if key == 'Key.space' and self.on_space is not None:
             self.keystrokes = key
             self.accept_and_clear_input()
-            self.on_space(key)
+            if self.on_space:
+                self.on_space(key)
         if key == 'Key.esc' and self.on_escape is not None:
             self.keystrokes = key
             self.accept_and_clear_input()
-            self.on_escape(key)
+            if self.on_escape:
+                self.on_escape(key)
         
     def accept_and_clear_input(self):
         self.accepted_input = self.keystrokes
         self.keystrokes = ''
         return self.accepted_input
 
-    def input(self, single_character_input = True, cursor_position = None):
+    def input(self,
+        single_character_input = True, 
+        cursor_position = None, 
+        on_navigation = None, 
+        on_space = None,
+        on_escape = None,
+        on_enter = None
+    ):
+        self.on_navigation = on_navigation
+        self.on_space = on_space
+        self.on_escape = on_escape
+        self.on_enter = on_enter
         self.listening = True
         self.single_character_input = single_character_input
         if cursor_position:
