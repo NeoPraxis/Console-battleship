@@ -56,7 +56,7 @@ class TestSession(unittest.TestCase):
         self.session.add_player(player)
         self.session.add_player(opponent)
         
-        def get_coordinates_from_player(self, player):
+        def get_coordinates_from_player(self, player, model):
             return Grid.get_random_coordinates()
 
         with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
@@ -100,7 +100,7 @@ class TestSession(unittest.TestCase):
     def test_set_up_game(self):
         def fake_set_player_name(self, player):
             player.name = 'fakename'
-        def get_coordinates_from_player(self, player):
+        def get_coordinates_from_player(self, player, model):
             return Grid.get_random_coordinates()
         with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
             with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
@@ -126,7 +126,7 @@ class TestSession(unittest.TestCase):
     def test_place_all_ships(self):
         player = Player(name = 'bob', is_ai = False)
         opponent = Player(name = 'AI', is_ai = True)
-        def get_coordinates_from_player(self, player):
+        def get_coordinates_from_player(self, player, model):
             return Grid.get_random_coordinates()
 
         with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
@@ -168,7 +168,7 @@ class TestSession(unittest.TestCase):
         self.session.add_player(player)
         self.session.add_player(opponent)
         
-        def get_coordinates_from_player(self, player):
+        def get_coordinates_from_player(self, player, model):
             return Grid.get_random_coordinates()
 
         with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
@@ -198,7 +198,7 @@ class TestSession(unittest.TestCase):
     def test_start_new_game(self):
         def fake_set_player_name(self, player):
             player.name = 'fakename'
-        def get_coordinates_from_player(self, player):
+        def get_coordinates_from_player(self, player, model):
             return Grid.get_random_coordinates()
         with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
             with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
@@ -211,7 +211,7 @@ class TestSession(unittest.TestCase):
     def test_get_winner(self):
         def fake_set_player_name(self, player):
             player.name = 'fakename'
-        def get_coordinates_from_player(self, player):
+        def get_coordinates_from_player(self, player, model):
             return Grid.get_random_coordinates()
         with mock.patch.object(Session, 'set_player_name', fake_set_player_name):
             with mock.patch.object(Session, 'get_coordinates_from_player', get_coordinates_from_player):
