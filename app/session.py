@@ -45,15 +45,16 @@ class Session:
     def number_of_players(self):
         return len(self.__players)
 
-    def get_coordinates_from_player(self, player):
+    def get_coordinates_from_player(self, player, model):
         if player.is_ai == True:
             location, orientation = self.ai.place_ship()
             return location, orientation
+        self.ui.place_ship(model, player)
         location={'y':'A', 'x':'1'}
         return location, 'h'
 
     def place_ship_on_player_grid(self, player, model):
-        location, orientation = self.get_coordinates_from_player(player)
+        location, orientation = self.get_coordinates_from_player(player, model)
         ship_coordinates = player.grid.get_location_coordinates(model, location, orientation)
         try:
             result = player.grid.add_ship(model, ship_coordinates)
@@ -128,6 +129,8 @@ class Session:
     def get_winner(self):
         winner = next((p for p in self.__players if not p.is_defeated()), None)
         return winner
+
+    
 
     # announce the turn results
     # Display Get Weener
