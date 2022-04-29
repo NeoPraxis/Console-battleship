@@ -45,13 +45,13 @@ class Session:
     def number_of_players(self):
         return len(self.__players)
 
-    def get_coordinates_from_player(self, player, model):
+    def get_coordinates_from_player(self, player: Player, model: str):
         if player.is_ai == True:
             location, orientation = self.ai.place_ship()
             return location, orientation
         return self.ui.place_ship(model, player)
     
-    def place_ship_on_player_grid(self, player, model):
+    def place_ship_on_player_grid(self, player: Player, model: str):
         location, orientation = self.get_coordinates_from_player(player, model)
         ship_coordinates = player.grid.get_location_coordinates(model, location, orientation)
         try:
@@ -60,7 +60,7 @@ class Session:
             result = False
         return result
     
-    def place_ships(self, player):
+    def place_ships(self, player: Player):
         for model in Ship.models:
             while not self.place_ship_on_player_grid(player, model):
                 pass

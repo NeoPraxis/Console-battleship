@@ -4,12 +4,13 @@ from os import system, name
 
 class ConsoleUI:
     
-    def __init__(self, on_navigation = None, on_escape = None, on_space = None, on_enter = None):
+    def __init__(self, on_alphanumeric = None, on_navigation = None, on_escape = None, on_space = None, on_enter = None):
         self.listening = False
-        self.listen_for_keyboard_events()
+        self.listen_for_keyboard_events() 
         self.keystrokes = ''
         self.accepted_input = ''
         self.single_character_input = True
+        self.on_alphanumeric = on_alphanumeric
         self.on_navigation = on_navigation
         self.on_escape = on_escape
         self.on_space = on_space
@@ -17,6 +18,7 @@ class ConsoleUI:
         self.console_x = 0
         self.console_y = 0
         self.console_width = None
+        
 
     def print_xy(self, x, y, text, width = None):
         self.console_width = width
@@ -40,10 +42,12 @@ class ConsoleUI:
         key = str(key).replace("'", "")
         if self.is_navigation_key(key) and self.on_navigation is not None:
             self.keystrokes = key
-            self.accept_and_clear_input()
             if self.on_navigation:
                 self.on_navigation(key)
-        if self.is_alphanumeric_or_space(key):
+            else:
+                self.accept_and_clear_input()
+        if self.is_alphanumeric(key) and self.on_alphanumeric is not None:
+            self.on_alphanumeric(key)
             self.keystrokes += key
             if self.single_character_input:
                 self.accept_and_clear_input()
@@ -57,7 +61,6 @@ class ConsoleUI:
             self.accept_and_clear_input()
         if key == 'Key.space' and self.on_space is not None:
             self.keystrokes = key
-            self.accept_and_clear_input()
             if self.on_space:
                 self.on_space(key) 
         if key == 'Key.esc' and self.on_escape is not None:
@@ -73,12 +76,15 @@ class ConsoleUI:
 
     def input(self,
         single_character_input = True, 
-        cursor_position = None, 
+        cursor_position = None,
+        on_alphanumeric = None,
         on_navigation = None, 
         on_space = None,
         on_escape = None,
         on_enter = None
     ):
+    
+        self.on_alphanumeric = on_alphanumeric
         self.on_navigation = on_navigation
         self.on_space = on_space
         self.on_escape = on_escape
@@ -96,10 +102,9 @@ class ConsoleUI:
         self.listening = False
         return input_return_value
     
-    def is_alphanumeric_or_space(self, char: str):
+    def is_alphanumeric(self, char: str):
        is_alphanumeric = char.isalnum()
-       is_space = char.isspace()
-       return is_alphanumeric or is_space
+       return is_alphanumeric
         
     def is_navigation_key(self, key):
         navigation_keys = ['Key.up', 'Key.down', 'Key.left', 'Key.right']

@@ -17,6 +17,9 @@ class TestUI(unittest.TestCase):
         self.assertIsInstance(self.ui.console_ui, ConsoleUI)
         self.assertIsInstance(self.ui.cursor, dict)
         self.assertIsInstance(self.ui.orientation, str)
+        self.assertIsInstance(self.ui.is_placing_ship, bool)
+        self.assertIsInstance(self.ui.place_ship_model, str)
+        self.assertIsInstance(self.ui.keystrokes, str)
         self.assertTrue(callable(self.ui.get_name))
         self.assertTrue(callable(self.ui.display_place_ship_instructions))
         self.assertTrue(callable(self.ui.place_ship))
@@ -63,7 +66,7 @@ class TestUI(unittest.TestCase):
         self.assertIn('A |[O]| O |   |   |   |   |   |   |   |   |', output)
 
     def test_ui_can_return_content_for_single_coordinate_on_grid(self):
-        player = Player('Bob', is_ai = False)
+        player: Player = Player('Bob', is_ai = False)
         location = {'y':'A', 'x':'1'}
         ship_coordinates_list1 = player.grid.get_location_coordinates(
             model = 'Destroyer', location = location, orientation = 'h'
@@ -73,17 +76,18 @@ class TestUI(unittest.TestCase):
         player.receive_a_shot(coordinates)
         coordinates2 = Coordinates(location={'y':'A', 'x':'3'})
         player.receive_a_shot(coordinates2)
+        all_ship_coordinates = player.grid.get_all_ship_coordinates()
 
-        grid_content = self.ui.get_grid_content(player, 'A', '1')
+        grid_content = self.ui.get_grid_content(player, 'A', '1', all_ship_coordinates)
         self.assertEqual(grid_content, '[O]')
 
-        grid_content = self.ui.get_grid_content(player, 'A', '3')
+        grid_content = self.ui.get_grid_content(player, 'A', '3', all_ship_coordinates)
         self.assertEqual(grid_content, ' * ')
 
-        grid_content = self.ui.get_grid_content(player, 'A', '4')
+        grid_content = self.ui.get_grid_content(player, 'A', '4', all_ship_coordinates)
         self.assertEqual(grid_content, '   ')
         
-        grid_content = self.ui.get_grid_content(player, 'A', '2')
+        grid_content = self.ui.get_grid_content(player, 'A', '2', all_ship_coordinates)
         self.assertEqual(grid_content, ' X ')
 
     def test_up_down_left_right_arrow_keys_moves_cursor_and_stores_coordinates(self):

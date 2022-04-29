@@ -44,6 +44,7 @@ class TestConsoleUI(unittest.TestCase):
         self.assertIsInstance(self.console_ui.keystrokes, str)
         self.assertIsInstance(self.console_ui.single_character_input, bool)
         self.assertIsInstance(self.console_ui.accepted_input, str)
+        self.assertTrue(callable(self.console_ui.on_alphanumeric))
         self.assertTrue(callable(self.console_ui.on_navigation))
         self.assertTrue(callable(self.console_ui.on_space))
         self.assertTrue(callable(self.console_ui.on_escape))
@@ -52,7 +53,7 @@ class TestConsoleUI(unittest.TestCase):
         self.assertTrue(callable(self.console_ui.listen_for_keyboard_events))
         self.assertTrue(callable(self.console_ui.on_press))
         self.assertTrue(callable(self.console_ui.input))
-        self.assertTrue(callable(self.console_ui.is_alphanumeric_or_space))
+        self.assertTrue(callable(self.console_ui.is_alphanumeric))
         self.assertTrue(callable(self.console_ui.accept_and_clear_input))
         self.assertTrue(callable(self.console_ui.is_navigation_key))
         self.assertTrue(callable(self.console_ui.hide_cursor))
@@ -77,23 +78,23 @@ class TestConsoleUI(unittest.TestCase):
         self.assertIn('W', input)
 
     def test_is_alphanumeric_or_space_returns_true_if_valid_text_entered(self):
-        is_alphnum_or_space = self.console_ui.is_alphanumeric_or_space('a')
+        is_alphnum_or_space = self.console_ui.is_alphanumeric('a')
         self.assertTrue(is_alphnum_or_space)
-        is_alphnum_or_space = self.console_ui.is_alphanumeric_or_space('A')
+        is_alphnum_or_space = self.console_ui.is_alphanumeric('A')
         self.assertTrue(is_alphnum_or_space)
-        is_alphnum_or_space = self.console_ui.is_alphanumeric_or_space('1')
+        is_alphnum_or_space = self.console_ui.is_alphanumeric('1')
         self.assertTrue(is_alphnum_or_space)
-        is_alphnum_or_space = self.console_ui.is_alphanumeric_or_space(' ')
+        is_alphnum_or_space = self.console_ui.is_alphanumeric(' ')
         self.assertTrue(is_alphnum_or_space)
         
     def test_is_not_alphanumeric_returns_false_if_invalid_text_entered(self):
-        is_non_alphnum = self.console_ui.is_alphanumeric_or_space('.')
+        is_non_alphnum = self.console_ui.is_alphanumeric('.')
         self.assertFalse(is_non_alphnum)
-        is_non_alphnum = self.console_ui.is_alphanumeric_or_space('Key.enter')
+        is_non_alphnum = self.console_ui.is_alphanumeric('Key.enter')
         self.assertFalse(is_non_alphnum)
-        is_non_alphnum = self.console_ui.is_alphanumeric_or_space('Key.up')
+        is_non_alphnum = self.console_ui.is_alphanumeric('Key.up')
         self.assertFalse(is_non_alphnum)
-        is_non_alphnum = self.console_ui.is_alphanumeric_or_space('Key.esc')
+        is_non_alphnum = self.console_ui.is_alphanumeric('Key.esc')
         self.assertFalse(is_non_alphnum)
         
         

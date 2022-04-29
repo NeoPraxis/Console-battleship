@@ -9,12 +9,20 @@ class UI:
         self.cursor = {'y':'A', 'x':'1'}
         self.orientation = 'h'
         self.player = None
+        self.is_placing_ship = False
+        self.place_ship_model = ''
+        self.keystrokes = ''
 
     def get_name(self):
         self.console_ui.clear_screen()
         self.console_ui.print_xy(1, 1, 'What is your name?: ', 60)
         self.console_ui.show_cursor()
-        name = self.console_ui.input(single_character_input = False, cursor_position = {'x': 2, 'y': 1})
+        name = self.console_ui.input(
+            single_character_input = False, 
+            cursor_position = {'x': 2, 'y': 1},
+            on_alphanumeric = self.on_alphanumeric
+        )
+
         self.console_ui.hide_cursor()
         return name
 
@@ -26,30 +34,36 @@ class UI:
         self.console_ui.print_xy(4, 1, f'4: Press enter to place your {model}.', 60)
     
     def place_ship(self, model: str, player: Player):
+        self.is_placing_ship = True
+        self.place_ship_model = model
         self.player = player
         self.display_place_ship_instructions(model)
         self.print_grid(player)
         self.console_ui.input(on_navigation = self.on_navigation, on_space = self.on_space, on_enter = self.on_enter)
+        self.is_placing_ship = False
         return self.cursor, self.orientation
 
-    def print_grid(self, player):
+    def print_grid(self, player: Player):
         grid_header = '   '.join(Grid.x)
         self.console_ui.print_xy(6, 1, f'    {grid_header} ', 60)
         grid_line = '+'.join('---' for x in Grid.x)
         self.console_ui.print_xy(7, 1, f'  |{grid_line}|', 60)
+        all_ship_coordinates = player.grid.get_all_ship_coordinates()
+        if self.is_placing_ship:
+            ship_cursor = player.grid.get_location_coordinates(self.place_ship_model, self.cursor, self.orientation)
+            all_ship_coordinates += ship_cursor
 
         for y in Grid.y:
             print_x = Grid.y.index(y) * 2 + 8
             row_string = f'{y} |'
             for x in Grid.x:
-                grid_content = self.get_grid_content(player, y, x)
+                grid_content = self.get_grid_content(player, y, x, all_ship_coordinates)
                 row_string += f'{grid_content}|'
             self.console_ui.print_xy(print_x, 1, row_string, 60)
             self.console_ui.print_xy(print_x + 1, 1, f'  |{grid_line}|', 60)
 
-    def get_grid_content(self, player: Player, y, x):
+    def get_grid_content(self, player: Player, y, x, all_ship_coordinates):
         grid_content = ' '
-        all_ship_coordinates = player.grid.get_all_ship_coordinates()
         coordinates = Coordinates(location = {'y':y, 'x':x})
         match = list(filter(lambda c: c == coordinates, all_ship_coordinates))
         if match:
@@ -60,6 +74,9 @@ class UI:
                 grid_content = '*'
         is_cursor = self.cursor['x'] == x and self.cursor['y'] == y
         return f'[{grid_content}]' if is_cursor else f' {grid_content} '
+    
+    def on_alphanumeric(self, key):
+        self.keystrokes += key
 
     def on_navigation(self, key):
         x_index = Grid.x.index(self.cursor['x'])
