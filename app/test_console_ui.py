@@ -9,9 +9,10 @@ from threading import Timer
 class TestConsoleUI(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.console_ui = ConsoleUI(self.on_navigation, self.on_escape, self.on_space, self.on_enter)
+        self.console_ui = ConsoleUI(self.on_alphanumeric, self.on_navigation, self.on_escape, self.on_space, self.on_enter)
         self.keyboard = Controller()
         self.time = 0
+        self.handled_alphanumeric_key = False
         self.handled_navigation_key = False
         self.handled_escape_key = False
         self.handled_space_key = False
@@ -19,6 +20,9 @@ class TestConsoleUI(unittest.TestCase):
 
     def get_name(self):
         self.console_ui.print_xy(1, 1, 'What is your name?: ', 60)
+
+    def on_alphanumeric(self, alphanumeric_key):
+        self.handled_alphanumeric_key = True
 
     def on_navigation(self, navigation_key):
         self.handled_navigation_key = True
@@ -77,7 +81,7 @@ class TestConsoleUI(unittest.TestCase):
         input = self.console_ui.input(single_character_input = True)
         self.assertIn('W', input)
 
-    def test_is_alphanumeric_or_space_returns_true_if_valid_text_entered(self):
+    def test_is_alphanumeric_returns_true_if_valid_text_entered(self):
         is_alphnum_or_space = self.console_ui.is_alphanumeric('a')
         self.assertTrue(is_alphnum_or_space)
         is_alphnum_or_space = self.console_ui.is_alphanumeric('A')
@@ -85,7 +89,7 @@ class TestConsoleUI(unittest.TestCase):
         is_alphnum_or_space = self.console_ui.is_alphanumeric('1')
         self.assertTrue(is_alphnum_or_space)
         is_alphnum_or_space = self.console_ui.is_alphanumeric(' ')
-        self.assertTrue(is_alphnum_or_space)
+        self.assertFalse(is_alphnum_or_space)
         
     def test_is_not_alphanumeric_returns_false_if_invalid_text_entered(self):
         is_non_alphnum = self.console_ui.is_alphanumeric('.')
