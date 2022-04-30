@@ -40,6 +40,7 @@ class TestSession(unittest.TestCase):
         self.assertTrue(callable(self.session.play_a_game))
         self.assertTrue(callable(self.session.start_new_game))
         self.assertTrue(callable(self.session.get_winner))
+        self.assertTrue(callable(self.session.display_turn_results))
 
     def get_player_with_shot(self):
         player = Player('Bob', is_ai = False)
@@ -224,5 +225,14 @@ class TestSession(unittest.TestCase):
                 self.assertIsInstance(winner, Player)
                 self.assertFalse(winner.is_defeated())
         
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_session_displays_turn_results(self, mock_out):
+        player, opponent = self.get_player_and_opponent()
+        shot_one = opponent.grid.ships[0].coordinates[0]
+        play_a_turn = self.session.play_a_turn(player, opponent)
+        self.assertFalse(play_a_turn)
+        self.assertEqual(self.session.number_of_turns(), 1)
+        output = mock_out.getvalue()
+        self.assertEqual('Bob scored a hit on a Destroyer', output)
         
 
