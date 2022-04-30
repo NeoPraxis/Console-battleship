@@ -1,7 +1,10 @@
+
 from coordinates import Coordinates
 from console_ui import ConsoleUI
 from grid import Grid
 from player import Player
+from shot import Shot
+from ship import Ship
 class UI:
     
     def __init__(self):
@@ -40,9 +43,17 @@ class UI:
         self.player = player
         self.display_place_ship_instructions(model)
         self.print_grid(player)
-        self.console_ui.input(on_navigation = self.on_navigation, on_space = self.on_space, on_enter = self.on_enter)
+        self.console_ui.input(on_navigation = self.on_navigation, on_space = self.on_space)
         self.is_placing_ship = False
         return self.cursor, self.orientation
+    
+    def get_shot(self, player: Player, opponent: Player):
+        self.player = player
+        self.opponent = opponent
+        self.print_grid(player, is_targeting = False)
+        self.print_grid(opponent, is_targeting = True)
+        self.console_ui.input(on_navigation = self.on_navigation)
+        return self.cursor
 
     def print_grid(self, player: Player, is_targeting: bool = False):
         left = 61 if is_targeting else 1
@@ -105,7 +116,6 @@ class UI:
             if not self.is_placing_ship:
                 self.print_grid(self.opponent, is_targeting = True)
                 
-
     def on_space(self, key):
         self.orientation = 'v' if self.orientation == 'h' else 'h'
         if self.player:
@@ -114,10 +124,19 @@ class UI:
     def on_enter(self, key):
         pass 
 
-    def get_shot(self, player: Player, opponent: Player):
-        self.player = player
-        self.opponent = opponent
-        self.print_grid(player, is_targeting = False)
-        self.print_grid(opponent, is_targeting = True)
+    def turn_results(self, player: Player, shot: Shot):
+        hit_result = f'{player.name} scored a hit on {shot.coordinates.model}' if shot.coordinates.hit else ' '*60
+        left = 1 if player.is_ai else 61
+        self.console_ui.print_xy(1, left, hit_result, 60)
+        is_sunk = shot.coordinates.hit and self.opponent.grid.is_ship_sunk(shot.coordinates.model)
+        sunk_result = f'{player.name} sunk {shot.coordinates.model}' if is_sunk else ' '*60
+        self.console_ui.print_xy(2, left, sunk_result, 60)
+        self.console_ui.print_xy(3, left, ' '*60, 60)
+        self.console_ui.print_xy(4, left, ' '*60, 60)
+
+    def game_results(self, player: Player, number_of_turns: int):
+        left = 1 if player.is_ai else 61
+        game_result = f'{player.name} is victorious!'
+        self.console_ui.print_xy(3, left, game_result, 60)
+        self.console_ui.print_xy(4, left, f'in {int(number_of_turns / 2)} turns', 60)
         self.console_ui.input(on_navigation = self.on_navigation)
-        return self.cursor

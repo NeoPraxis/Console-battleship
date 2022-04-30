@@ -229,10 +229,15 @@ class TestSession(unittest.TestCase):
     def test_session_displays_turn_results(self, mock_out):
         player, opponent = self.get_player_and_opponent()
         shot_one = opponent.grid.ships[0].coordinates[0]
-        play_a_turn = self.session.play_a_turn(player, opponent)
-        self.assertFalse(play_a_turn)
-        self.assertEqual(self.session.number_of_turns(), 1)
-        output = mock_out.getvalue()
-        self.assertEqual('Bob scored a hit on a Destroyer', output)
-        
-
+        def fake_get_shot_from_player(self, player, opponent):
+            if player.is_ai:
+                return self.ai.get_shot()
+            else:
+                return shot_one
+        with mock.patch.object(Session, 'get_shot_from_player', fake_get_shot_from_player):
+            session = Session()
+            play_a_turn = self.session.play_a_turn(player, opponent)
+            self.assertFalse(play_a_turn)
+            self.assertEqual(session.number_of_turns(), 1)
+            output = mock_out.getvalue()
+            self.assertEqual('Bob scored a hit on a Destroyer', output)

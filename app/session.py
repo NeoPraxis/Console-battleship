@@ -84,6 +84,7 @@ class Session:
         if recorded_shot:
             turn = Turn(shot, player)
             self.add_turn(turn)
+            self.display_turn_results(player, shot)
         is_game_over = self.is_game_over()
         return is_game_over
 
@@ -127,7 +128,9 @@ class Session:
         winner = next((p for p in self.__players if not p.is_defeated()), None)
         return winner
 
-    
+    def display_turn_results(self, player: Player, shot: Shot):
+        self.ui.turn_results(player, shot)
 
-    # announce the turn results
-    # Display Get Weener
+    def display_game_winner(self, player: Player):
+        self.ui.game_results(player, self.number_of_turns())
+
