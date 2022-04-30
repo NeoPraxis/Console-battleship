@@ -19,6 +19,7 @@ class Session:
         self.set_up_game()
         self.play_a_game()
         winner = self.get_winner()
+        self.display_game_winner(winner)
         return winner
 
     def set_up_game(self):
