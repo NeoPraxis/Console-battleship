@@ -15,6 +15,8 @@ class TestUI(unittest.TestCase):
     def test_if_ui_can_instantiate(self):
         self.assertIsInstance(self.ui, UI)
         self.assertIsInstance(self.ui.console_ui, ConsoleUI)
+        self.assertIsNone(self.ui.player)
+        self.assertIsNone(self.ui.opponent)
         self.assertIsInstance(self.ui.cursor, dict)
         self.assertIsInstance(self.ui.orientation, str)
         self.assertIsInstance(self.ui.is_placing_ship, bool)

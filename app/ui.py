@@ -9,6 +9,7 @@ class UI:
         self.cursor = {'y':'A', 'x':'1'}
         self.orientation = 'h'
         self.player = None
+        self.opponent = None
         self.is_placing_ship = False
         self.place_ship_model = ''
         self.keystrokes = ''
@@ -59,22 +60,25 @@ class UI:
             print_x = Grid.y.index(y) * 2 + 8
             row_string = f'{y} |'
             for x in Grid.x:
-                grid_content = self.get_grid_content(player, y, x, all_ship_coordinates)
+                grid_content = self.get_grid_content(player, y, x, all_ship_coordinates, is_targeting)
                 row_string += f'{grid_content}|'
             self.console_ui.print_xy(print_x, left, row_string, 60)
             self.console_ui.print_xy(print_x + 1, left, f'  |{grid_line}|', 60)
 
-    def get_grid_content(self, player: Player, y, x, all_ship_coordinates):
+    def get_grid_content(self, player: Player, y, x, all_ship_coordinates, is_targeting: bool = False):
         grid_content = ' '
         coordinates = Coordinates(location = {'y':y, 'x':x})
+        if is_targeting:
+            all_ship_coordinates = []
         match = list(filter(lambda c: c == coordinates, all_ship_coordinates))
         if match:
             grid_content = 'X' if match[0].hit else 'O'
         else:
             match = list(filter(lambda s: s.coordinates == coordinates, player.grid.shots))
             if match:
-                grid_content = '*'
-        is_cursor = self.cursor['x'] == x and self.cursor['y'] == y
+                grid_content = 'X' if match[0].coordinates.hit else '*'
+        
+        is_cursor = self.cursor['x'] == x and self.cursor['y'] == y and (self.is_placing_ship or is_targeting)
         return f'[{grid_content}]' if is_cursor else f' {grid_content} '
     
     def on_alphanumeric(self, key):
@@ -98,6 +102,9 @@ class UI:
 
         if self.player:
             self.print_grid(self.player)
+            if not self.is_placing_ship:
+                self.print_grid(self.opponent, is_targeting = True)
+                
 
     def on_space(self, key):
         self.orientation = 'v' if self.orientation == 'h' else 'h'
@@ -108,6 +115,8 @@ class UI:
         pass 
 
     def get_shot(self, player: Player, opponent: Player):
+        self.player = player
+        self.opponent = opponent
         self.print_grid(player, is_targeting = False)
         self.print_grid(opponent, is_targeting = True)
         self.console_ui.input(on_navigation = self.on_navigation)
