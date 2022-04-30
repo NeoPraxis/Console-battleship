@@ -1,4 +1,4 @@
-from distutils.log import error
+
 import unittest
 from ship import Ship
 from coordinates import Coordinates

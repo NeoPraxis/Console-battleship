@@ -43,11 +43,13 @@ class UI:
         self.is_placing_ship = False
         return self.cursor, self.orientation
 
-    def print_grid(self, player: Player):
+    def print_grid(self, player: Player, is_targeting: bool = False):
+        left = 61 if is_targeting else 1
+        self.console_ui.print_xy(5, left, 'Target Grid' if is_targeting else 'Ocean Grid', 60)
         grid_header = '   '.join(Grid.x)
-        self.console_ui.print_xy(6, 1, f'    {grid_header} ', 60)
+        self.console_ui.print_xy(6, left, f'    {grid_header} ', 60)
         grid_line = '+'.join('---' for x in Grid.x)
-        self.console_ui.print_xy(7, 1, f'  |{grid_line}|', 60)
+        self.console_ui.print_xy(7, left, f'  |{grid_line}|', 60)
         all_ship_coordinates = player.grid.get_all_ship_coordinates()
         if self.is_placing_ship:
             ship_cursor = player.grid.get_location_coordinates(self.place_ship_model, self.cursor, self.orientation)
@@ -59,8 +61,8 @@ class UI:
             for x in Grid.x:
                 grid_content = self.get_grid_content(player, y, x, all_ship_coordinates)
                 row_string += f'{grid_content}|'
-            self.console_ui.print_xy(print_x, 1, row_string, 60)
-            self.console_ui.print_xy(print_x + 1, 1, f'  |{grid_line}|', 60)
+            self.console_ui.print_xy(print_x, left, row_string, 60)
+            self.console_ui.print_xy(print_x + 1, left, f'  |{grid_line}|', 60)
 
     def get_grid_content(self, player: Player, y, x, all_ship_coordinates):
         grid_content = ' '
@@ -104,3 +106,9 @@ class UI:
 
     def on_enter(self, key):
         pass 
+
+    def get_shot(self, player: Player, opponent: Player):
+        self.print_grid(player, is_targeting = False)
+        self.print_grid(opponent, is_targeting = True)
+        self.console_ui.input(on_navigation = self.on_navigation)
+        return self.cursor

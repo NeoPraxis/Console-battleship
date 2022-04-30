@@ -30,6 +30,41 @@ class TestUI(unittest.TestCase):
         self.assertTrue(callable(self.ui.on_enter))
         self.assertTrue(callable(self.ui.get_shot))
     
+    def get_player_with_ships(self):
+        
+        player: Player = Player('Bob', is_ai = False)
+        location = {'y':'A', 'x':'1'}
+        ship_coordinates_list1 = player.grid.get_location_coordinates(
+            model = 'Destroyer', location = location, orientation = 'h'
+            )
+        player.grid.add_ship('Destroyer', ship_coordinates_list1)
+        
+        location = {'y':'B', 'x':'1'}
+        ship_coordinates_list1 = player.grid.get_location_coordinates(
+            model = 'Cruiser', location = location, orientation = 'h'
+            )
+        player.grid.add_ship('Cruiser', ship_coordinates_list1)
+        
+        location = {'y':'D', 'x':'1'}
+        ship_coordinates_list1 = player.grid.get_location_coordinates(
+            model = 'Submarine', location = location, orientation = 'h'
+            )
+        player.grid.add_ship('Submarine', ship_coordinates_list1)
+        
+        location = {'y':'E', 'x':'1'}
+        ship_coordinates_list1 = player.grid.get_location_coordinates(
+            model = 'Battleship', location = location, orientation = 'h'
+            )
+        player.grid.add_ship('Battleship', ship_coordinates_list1)
+        
+        player: Player = Player('Bob', is_ai = False)
+        location = {'y':'F', 'x':'1'}
+        ship_coordinates_list1 = player.grid.get_location_coordinates(
+            model = 'Carrier', location = location, orientation = 'h'
+            )
+        player.grid.add_ship('Carrier', ship_coordinates_list1)
+        return player
+
     @patch('sys.stdout', new_callable=io.StringIO)
     def test_get_name(self, mock_out):
         def set_response():
@@ -107,7 +142,16 @@ class TestUI(unittest.TestCase):
         self.ui.on_space('Key.space')
         self.assertEqual(self.ui.orientation, 'v')
 
-    def test_ui_can_display_targeting_grid(self):
-        pass
+    @patch('sys.stdout', new_callable=io.StringIO) 
+    def test_ui_can_display_targeting_grid(self, mock_out):
+        player = self.get_player_with_ships()
+        opponent = self.get_player_with_ships()
+        self.ui.print_grid(player, is_targeting = False)
+        output = mock_out.getvalue()
+        self.assertIn('Ocean Grid', output)
+        self.ui.print_grid(opponent, is_targeting = True)
+        output = mock_out.getvalue()
+        self.assertIn('Target Grid', output)
 
-        
+    def test_ui_returns_shot_coordinates(self):
+        pass

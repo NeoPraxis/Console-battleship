@@ -1,6 +1,7 @@
 import sys, copy, time, io
 from pynput.keyboard import Listener
 from os import system, name
+from exceptions import ExitGameException
 
 class ConsoleUI:
     
@@ -64,10 +65,10 @@ class ConsoleUI:
             if self.on_space:
                 self.on_space(key) 
         if key == 'Key.esc' and self.on_escape is not None:
-            self.keystrokes = key
-            self.accept_and_clear_input()
             if self.on_escape:
                 self.on_escape(key)
+                self.accepted_input = 'Exiting Game'
+                raise ExitGameException('Exiting Game')
         
     def accept_and_clear_input(self):
         self.accepted_input = self.keystrokes

@@ -91,8 +91,7 @@ class Session:
         if player.is_ai == True:
             location = self.ai.get_shot()
         else:
-            # TODO UI get shot (UPDATE LATER)
-            location, orientation = Grid.get_random_coordinates()  
+            location = self.ui.get_shot(player, opponent)
         return location
 
     def get_verified_shot(self, player: Player, opponent: Player) -> Shot:
